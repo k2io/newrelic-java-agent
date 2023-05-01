@@ -14,7 +14,6 @@ runs:
         distribution: 'temurin'
         java-version: |
           20
-          19
           17
           11
           8
@@ -26,7 +25,6 @@ runs:
         sed -i -e "s|jdk8=8|jdk8=${JAVA_HOME_8_X64}|
         s|jdk11=11|jdk11=${JAVA_HOME_11_X64}|
         s|jdk17=17|jdk17=${JAVA_HOME_17_X64}|
-        s|jdk19=19|jdk19=${JAVA_HOME_19_X64}|
         s|jdk20=20|jdk20=${JAVA_HOME_20_X64}|" gradle.properties.gha
         cat gradle.properties.gha >> gradle.properties
 
