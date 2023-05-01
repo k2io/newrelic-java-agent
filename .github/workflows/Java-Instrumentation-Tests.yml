@@ -20,7 +20,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        jre: [8, 11, 17, 19]
+        jre: [8, 11, 17, 20]
     name: Java ${{ matrix.jre }}
     timeout-minutes: 120
     # needs: install-all-java
