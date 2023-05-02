@@ -47,9 +47,16 @@ runs:
       shell: bash
       run: ./gradlew $GRADLE_OPTIONS :newrelic-api:publishToMavenLocal :agent-bridge:publishToMavenLocal :agent-bridge-datastore:publishToMavenLocal :newrelic-weaver-api:publishToMavenLocal :newrelic-weaver:publishToMavenLocal :newrelic-weaver-scala:publishToMavenLocal :newrelic-weaver-scala-api:publishToMavenLocal --parallel
 
+    - name: Checkout K2 agent
+      uses: actions/checkout@v3
+      with:
+        repository: newrelic/csec-java-agent
+        ref: develop
+        path: csec-java-agent
+
     - name: Publish K2 locally
       shell: bash
       run: |
-        cd k2-javaagent
+        cd csec-java-agent
         ./gradlew $GRADLE_OPTIONS publishToMavenLocal
         cd ..
