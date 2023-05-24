@@ -14,6 +14,7 @@ import com.newrelic.agent.bridge.AgentBridge;
 import com.newrelic.agent.config.AgentConfig;
 import com.newrelic.agent.config.AgentConfigImpl;
 import com.newrelic.agent.config.ClassTransformerConfig;
+import com.newrelic.agent.instrumentation.annotationmatchers.AnnotationMatcher;
 import com.newrelic.agent.instrumentation.classmatchers.ClassAndMethodMatcher;
 import com.newrelic.agent.instrumentation.classmatchers.OptimizedClassMatcher.Match;
 import com.newrelic.agent.instrumentation.classmatchers.OptimizedClassMatcherBuilder;
@@ -23,10 +24,13 @@ import com.newrelic.agent.instrumentation.methodmatchers.MethodMatcher;
 import com.newrelic.agent.instrumentation.tracing.TraceDetails;
 import com.newrelic.agent.instrumentation.tracing.TraceDetailsBuilder;
 import com.newrelic.agent.instrumentation.weaver.ClassLoaderClassTransformer;
+import com.newrelic.agent.security.deps.org.apache.commons.lang3.StringUtils;
 import com.newrelic.agent.service.AbstractService;
 import com.newrelic.agent.service.ServiceFactory;
 import com.newrelic.agent.util.DefaultThreadFactory;
+import com.newrelic.agent.util.asm.Utils;
 import com.newrelic.api.agent.NewRelic;
+import com.newrelic.api.agent.security.schema.SecurityMetaData;
 import org.objectweb.asm.commons.Method;
 
 import java.lang.instrument.ClassFileTransformer;
@@ -38,7 +42,9 @@ import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Predicate;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 public class ClassTransformerServiceImpl extends AbstractService implements ClassTransformerService {
 
@@ -114,13 +120,7 @@ public class ClassTransformerServiceImpl extends AbstractService implements Clas
     }
 
     private void queueRetransform() {
-        executor.schedule(new Runnable() {
-
-            @Override
-            public void run() {
-                retransformMatchingClasses();
-            }
-        }, getRetransformPeriodInSeconds(), TimeUnit.SECONDS);
+        executor.schedule(() -> retransformMatchingClasses(), getRetransformPeriodInSeconds(), TimeUnit.SECONDS);
     }
 
     private long getRetransformPeriodInSeconds() {
@@ -153,9 +153,12 @@ public class ClassTransformerServiceImpl extends AbstractService implements Clas
         contextManager = InstrumentationContextManager.create(classLoaderClassTransformer, instrProxy,
                 AgentBridge.class.getClassLoader() == null);
 
-        // Preload NR Transaction and related object to avoid ClassCircularity Error in Security instrumentation Module
-        // java-io-stream.
+        // Preload NR Transaction and related object to avoid ClassCircularity Error in Security instrumentation Module java-io-stream.
         NewRelic.getAgent().getTransaction();
+
+        // Preload Security used classes to avoid complete application thread blocking in rare scenarios.
+        StringUtils.startsWithAny(StringUtils.LF, StringUtils.EMPTY, StringUtils.LF);
+        new SecurityMetaData();
 
         contextManager.addContextClassTransformer(classTransformer.getMatcher(), classTransformer);
         for (PointCut pc : classTransformer.getPointcuts()) {
@@ -291,6 +294,24 @@ public class ClassTransformerServiceImpl extends AbstractService implements Clas
     @Override
     public Instrumentation getExtensionInstrumentation() {
         return extensionInstrumentation;
+    }
+
+    @Override
+    public void retransformForAttach() {
+        final AnnotationMatcher traceAnnotationMatcher = ServiceFactory.getConfigService().getDefaultAgentConfig()
+                .getClassTransformerConfig().getTraceAnnotationMatcher();
+        final Predicate<Class> traceMatcher = Utils.getAnnotationsMatcher(traceAnnotationMatcher);
+        final List<Class> classesToRejit = Arrays.asList(getExtensionInstrumentation().getAllLoadedClasses())
+                .stream().filter(traceMatcher)
+                .collect(Collectors.toList());
+
+        if (!classesToRejit.isEmpty()) {
+            try {
+                getExtensionInstrumentation().retransformClasses(classesToRejit.toArray(new Class[0]));
+            } catch (UnmodifiableClassException e) {
+                Agent.LOG.log(Level.SEVERE, e.getMessage(), e);
+            }
+        }
     }
 
     private static class TraceMatchTransformer implements ContextClassTransformer {
