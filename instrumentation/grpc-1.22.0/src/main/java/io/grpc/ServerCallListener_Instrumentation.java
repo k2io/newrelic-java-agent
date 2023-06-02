@@ -15,7 +15,7 @@ import com.newrelic.api.agent.weaver.Weave;
 import com.newrelic.api.agent.weaver.Weaver;
 
 @Weave(originalName = "io.grpc.ServerCall$Listener", type = MatchType.BaseClass)
-public abstract class ServerCallListener_Instrumentation {
+public abstract class ServerCallListener_Instrumentation<ReqT> {
 
     @NewField
     public Token token;
@@ -30,4 +30,12 @@ public abstract class ServerCallListener_Instrumentation {
         Weaver.callOriginal();
     }
 
+    @Trace(async = true)
+    public void onMessage(ReqT message) {
+        // onHalfClose gets executed right before we enter customer code. This helps ensure that they will have a transaction available on the thread
+        if (token != null) {
+            token.link();
+        }
+        Weaver.callOriginal();
+    }
 }
