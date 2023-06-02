@@ -18,6 +18,7 @@ import io.grpc.DecompressorRegistry;
 import io.grpc.Metadata;
 import io.grpc.MethodDescriptor;
 import io.grpc.ServerCallListener_Instrumentation;
+import io.grpc.Status;
 import io.perfmark.Tag;
 
 @Weave(originalName = "io.grpc.internal.ServerCallImpl")
@@ -44,9 +45,24 @@ final class ServerCallImpl_Instrumentation<ReqT, RespT> {
 
         if (token != null) {
             token.link();
-            token = null;
         }
 
         return Weaver.callOriginal();
+    }
+
+    @Trace(async = true)
+    public void sendMessage(RespT message) {
+        // This helps ensure that csec agent will have a transaction available on the thread
+        if (token != null) {
+            token.link();
+        }
+
+        Weaver.callOriginal();
+    }
+
+    @Trace(async = true)
+    public void close(Status status, Metadata trailers) {
+        token = null;
+        Weaver.callOriginal();
     }
 }
