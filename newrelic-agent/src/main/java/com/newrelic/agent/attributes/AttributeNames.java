@@ -25,6 +25,9 @@ public final class AttributeNames {
     public static final String SYNTHETICS_RESOURCE_ID = "synthetics_resource_id";
     public static final String SYNTHETICS_MONITOR_ID = "synthetics_monitor_id";
     public static final String SYNTHETICS_JOB_ID = "synthetics_job_id";
+    public static final String SYNTHETICS_TYPE = "synthetics_type";
+    public static final String SYNTHETICS_INITIATOR = "synthetics_initiator";
+    public static final String SYNTHETICS_VERSION = "synthetics_version";
     public static final String TIMEOUT_CAUSE = "nr.timeoutCause";
     public static final String ERROR_EXPECTED = "error.expected";
 
@@ -33,6 +36,8 @@ public final class AttributeNames {
     public static final String HTTP_METHOD = "http.method";
     public static final String HTTP_STATUS_CODE = "http.statusCode";
     public static final String HTTP_STATUS_TEXT = "http.statusText";
+    public static final String HTTP_STATUS = "httpResponseCode";
+    public static final String HTTP_STATUS_MESSAGE = "httpResponseMessage";
 
     public static final String LOCK_THREAD_NAME = "jvm.lock_thread_name";
     public static final String THREAD_NAME = "jvm.thread_name";
