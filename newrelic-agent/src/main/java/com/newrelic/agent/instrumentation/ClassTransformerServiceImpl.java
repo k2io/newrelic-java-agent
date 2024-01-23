@@ -33,8 +33,6 @@ import com.newrelic.api.agent.NewRelic;
 import com.newrelic.api.agent.security.schema.SecurityMetaData;
 import org.objectweb.asm.commons.Method;
 
-import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.lang.instrument.Instrumentation;
@@ -163,8 +161,12 @@ public class ClassTransformerServiceImpl extends AbstractService implements Clas
         new SecurityMetaData();
 
         try {
-            Cipher cipher = Cipher.getInstance("AES");
-            KeyGenerator keyGen = KeyGenerator.getInstance("DES");
+            Class cipherClass = Class.forName("javax.crypto.Cipher");
+            java.lang.reflect.Method getInstance = cipherClass.getDeclaredMethod("getInstance", String.class);
+            getInstance.invoke("AES");
+            Class keyGeneratorClass = Class.forName("javax.crypto.KeyGenerator");
+            java.lang.reflect.Method getInstance2 = keyGeneratorClass.getDeclaredMethod("getInstance", String.class);
+            getInstance2.invoke("DES");
         } catch (Exception ignored){}
 
         contextManager.addContextClassTransformer(classTransformer.getMatcher(), classTransformer);
