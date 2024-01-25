@@ -3,6 +3,8 @@
 ^java/io/(BufferedOutputStream|ByteArrayOutputStream|DataOutputStream|FilterOutputStream|ObjectOutputStream|PipedOutputStream)
 ^java/lang/(NullOutputStream|ProcessPipeOutputStream)
 ^java/net/SocketOutputStream
+^javax/crypto/BadPaddingException
+^javax/crypto/SecretKey
 ^(org/objectweb/asm/|javax/xml/|org/apache/juli/)(.*)
 # Don't instrument agent threads
 ^com/newrelic/agent/.*AgentThread.*
