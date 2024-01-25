@@ -69,7 +69,7 @@ tasks.withType(JavaCompile).configureEach {
 
 // Compile all Java projects with jdk8 bootstrap classpath (to properly support target compatibility)
 def jdkPath = compiler.get().metadata.installationPath.asFile.absolutePath
-compileJava.options.bootstrapClasspath = files("${jdkPath}/jre/lib/rt.jar", "${jdkPath}/jre/lib/jsse.jar", "${jdkPath}/jre/lib/jce.jar")
+compileJava.options.bootstrapClasspath = files("${jdkPath}/jre/lib/rt.jar", "${jdkPath}/jre/lib/jsse.jar")
 
 // There is no clear way to run the same task under multiple JDKs, so we use the following gradle properties
 // and jenkins matrix plugin to run the instrumentation module tests.
