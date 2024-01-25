@@ -33,6 +33,7 @@ import com.newrelic.api.agent.NewRelic;
 import com.newrelic.api.agent.security.schema.SecurityMetaData;
 import org.objectweb.asm.commons.Method;
 
+import javax.crypto.BadPaddingException;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.lang.instrument.Instrumentation;
@@ -162,6 +163,7 @@ public class ClassTransformerServiceImpl extends AbstractService implements Clas
         new SecurityMetaData();
 
         try {
+            new BadPaddingException();
             Class bpeClass = Class.forName("javax.crypto.BadPaddingException");
             Constructor bpeConstructor = bpeClass.getConstructor();
             bpeConstructor.newInstance();
