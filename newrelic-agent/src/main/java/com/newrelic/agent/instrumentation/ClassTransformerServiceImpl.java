@@ -167,12 +167,7 @@ public class ClassTransformerServiceImpl extends AbstractService implements Clas
             KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
             keyGenerator.generateKey().getAlgorithm();
             new BadPaddingException();
-            Class bpeClass = Class.forName("javax.crypto.BadPaddingException");
-            Constructor bpeConstructor = bpeClass.getConstructor();
-            bpeConstructor.newInstance();
-            Agent.LOG.log(Level.FINER, "class javax.crypto.BadPaddingException is loaded");
         } catch (Exception ignored){
-            ignored.printStackTrace();
         }
 
         contextManager.addContextClassTransformer(classTransformer.getMatcher(), classTransformer);
