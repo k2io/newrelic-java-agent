@@ -37,6 +37,7 @@ import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.lang.instrument.Instrumentation;
 import java.lang.instrument.UnmodifiableClassException;
+import java.lang.reflect.Constructor;
 import java.security.ProtectionDomain;
 import java.text.MessageFormat;
 import java.util.*;
@@ -161,12 +162,9 @@ public class ClassTransformerServiceImpl extends AbstractService implements Clas
         new SecurityMetaData();
 
         try {
-            Class cipherClass = Class.forName("javax.crypto.Cipher");
-            java.lang.reflect.Method getInstance = cipherClass.getDeclaredMethod("getInstance", String.class);
-            getInstance.invoke("AES");
-            Class keyGeneratorClass = Class.forName("javax.crypto.KeyGenerator");
-            java.lang.reflect.Method getInstance2 = keyGeneratorClass.getDeclaredMethod("getInstance", String.class);
-            getInstance2.invoke("DES");
+            Class bpeClass = Class.forName("javax.crypto.BadPaddingException");
+            Constructor bpeConstructor = bpeClass.getConstructor();
+            bpeConstructor.newInstance();
         } catch (Exception ignored){}
 
         contextManager.addContextClassTransformer(classTransformer.getMatcher(), classTransformer);
