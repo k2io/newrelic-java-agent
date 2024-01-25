@@ -165,7 +165,10 @@ public class ClassTransformerServiceImpl extends AbstractService implements Clas
             Class bpeClass = Class.forName("javax.crypto.BadPaddingException");
             Constructor bpeConstructor = bpeClass.getConstructor();
             bpeConstructor.newInstance();
-        } catch (Exception ignored){}
+            Agent.LOG.log(Level.FINER, "class javax.crypto.BadPaddingException is loaded");
+        } catch (Exception ignored){
+            ignored.printStackTrace();
+        }
 
         contextManager.addContextClassTransformer(classTransformer.getMatcher(), classTransformer);
         for (PointCut pc : classTransformer.getPointcuts()) {
