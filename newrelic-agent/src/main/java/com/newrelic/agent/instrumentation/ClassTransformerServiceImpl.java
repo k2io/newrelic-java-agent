@@ -33,8 +33,6 @@ import com.newrelic.api.agent.NewRelic;
 import com.newrelic.api.agent.security.schema.SecurityMetaData;
 import org.objectweb.asm.commons.Method;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.KeyGenerator;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.lang.instrument.Instrumentation;
@@ -162,13 +160,6 @@ public class ClassTransformerServiceImpl extends AbstractService implements Clas
         // Preload Security used classes to avoid complete application thread blocking in rare scenarios.
         StringUtils.startsWithAny(StringUtils.LF, StringUtils.EMPTY, StringUtils.LF);
         new SecurityMetaData();
-
-        try {
-            KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
-            keyGenerator.generateKey().getAlgorithm();
-            new BadPaddingException();
-        } catch (Exception ignored){
-        }
 
         contextManager.addContextClassTransformer(classTransformer.getMatcher(), classTransformer);
         for (PointCut pc : classTransformer.getPointcuts()) {
