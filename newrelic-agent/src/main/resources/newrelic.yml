@@ -416,6 +416,43 @@ common: &default_settings
     # true, the security module will run but data will not be sent. Default is false.
     enabled: false
 
+    # The scan_schedule configuration allows to specify when IAST scans should be executed
+    scan_schedule:
+      # The delay field specifies the delay in minutes before the IAST scan starts. This allows to schedule the scan to start at a later time.
+      delay: 0        #In minutes, default is 0 min
+      # The duration field specifies the duration of the IAST scan in minutes. This determines how long the scan will run.
+      duration: 0      #In minutes, default will be forever
+
+    # The skip_iast_scan configuration allows to specify APIs, parameters, and categories that should not be scanned by Security Agents.
+    skip_iast_scan:
+      # The api field specifies list of APIs using regular expression (regex) patterns that follow the syntax of Perl 5. The regex pattern should provide a complete match for the URL without the endpoint.
+      # Example:
+      # api: [ ".*login.*" ]
+      api: []
+
+      # The parameters configuration allows users to specify headers, query parameters, and body keys that should be excluded from IAST scans.
+      parameters:
+        # A list of HTTP header keys. If a request includes any headers with these keys, the corresponding IAST scan will be skipped.
+        header: []
+        # A list of query parameter keys. The presence of these parameters in the request's query string will lead to skipping the IAST scan.
+        query: []
+        # A list of keys within the request body. If these keys are found in the body content, the IAST scan will be omitted.
+        body: []
+
+      #The iast_detection_category configuration allows to specify which categories of vulnerabilities should not be detected by Security Agents.
+      #If any of these categories are set to false, Security Agents will not generate events or flag vulnerabilities for that category.
+      iast_detection_category:
+        insecure_settings: false
+        invalid_file_access: false
+        sql_injection: false
+        nosql_injection: false
+        ldap_injection: false
+        javascript_injection: false
+        command_injection: false
+        xpath_injection: false
+        ssrf: false
+        rxss: false
+
     # Determines whether the low priority attack/vulnerability modules will instrument or not.
     # When this is disabled instrumentation of such modules will be skipped and vice versa, default is false.
     low-priority-instrumentation:
