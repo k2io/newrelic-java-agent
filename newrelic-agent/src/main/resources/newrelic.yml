@@ -421,7 +421,7 @@ common: &default_settings
       # The delay field specifies the delay in minutes before the IAST scan starts. This allows to schedule the scan to start at a later time.
       delay: 0        #In minutes, default is 0 min
       # The duration field specifies the duration of the IAST scan in minutes. This determines how long the scan will run.
-      duration: 0      #In minutes, default will be forever
+      duration: 0      #In minutes, default is forever
 
     # The skip_iast_scan configuration allows to specify APIs, parameters, and categories that should not be scanned by Security Agents.
     skip_iast_scan:
@@ -440,7 +440,7 @@ common: &default_settings
         body: []
 
       #The iast_detection_category configuration allows to specify which categories of vulnerabilities should not be detected by Security Agents.
-      #If any of these categories are set to false, Security Agents will not generate events or flag vulnerabilities for that category.
+      #If any of these categories are set to true, Security Agents will not generate events or flag vulnerabilities for that category.
       iast_detection_category:
         insecure_settings: false
         invalid_file_access: false
@@ -452,11 +452,6 @@ common: &default_settings
         xpath_injection: false
         ssrf: false
         rxss: false
-
-    # Determines whether the low priority attack/vulnerability modules will instrument or not.
-    # When this is disabled instrumentation of such modules will be skipped and vice versa, default is false.
-    low-priority-instrumentation:
-      enabled: false
 
     # New Relic Security provides two modes: IAST and RASP
     # Default is IAST. Due to the invasive nature of IAST scanning, DO NOT enable this mode in either a
@@ -473,6 +468,7 @@ common: &default_settings
 
     # These are the category of security events that can be detected. Set to false to disable detection of
     # individual event types. Default is true for each event type.
+    # This config is deprecated,
     detection:
       rci:
         enabled: true
