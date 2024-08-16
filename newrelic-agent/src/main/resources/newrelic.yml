@@ -422,6 +422,8 @@ common: &default_settings
       delay: 0        #In minutes, default is 0 min
       # The duration field specifies the duration of the IAST scan in minutes. This determines how long the scan will run.
       duration: 0      #In minutes, default is forever
+      # Allow sample collection of IAST events
+      allow_iast_sample_collection: false # Default is false
 
     # The skip_iast_scan configuration allows to specify APIs, parameters, and categories that should not be scanned by Security Agents.
     skip_iast_scan:
