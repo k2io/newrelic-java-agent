@@ -443,8 +443,8 @@ common: &default_settings
       # Allow continuously sample collection of IAST events
       always_sample_traces: false # Default is false
 
-    # The skip_iast_scan configuration allows to specify APIs, parameters, and categories that should not be scanned by Security Agents.
-    skip_iast_scan:
+    # The exclude_from_iast_scan configuration allows to specify APIs, parameters, and categories that should not be scanned by Security Agents.
+    exclude_from_iast_scan:
       # The api field specifies list of APIs using regular expression (regex) patterns that follow the syntax of Perl 5. The regex pattern should provide a complete match for the URL without the endpoint.
       # Example:
       #   api:
@@ -454,7 +454,7 @@ common: &default_settings
 
       # The parameters configuration allows users to specify headers, query parameters, and body keys that should be excluded from IAST scans.
       # Example:
-      #   parameters:
+      #   http_request_parameters:
       #    header:
       #      - X-Forwarded-For
       #    query:
@@ -463,7 +463,7 @@ common: &default_settings
       #    body:
       #      - account.email
       #      - account.contact
-      parameters:
+      http_request_parameters:
         # A list of HTTP header keys. If a request includes any headers with these keys, the corresponding IAST scan will be skipped.
         header: []
         # A list of query parameter keys. The presence of these parameters in the request's query string will lead to skipping the IAST scan.
