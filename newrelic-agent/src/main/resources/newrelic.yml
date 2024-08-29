@@ -429,6 +429,9 @@ common: &default_settings
     # New Relic Security’s SaaS connection URL
     validator_service_url: wss://csec.nr-data.net
 
+    # The scan_request_rate_limit configuration allows to specify maximum number of replay request played per minute.
+    # The maximum is 3600 and the minimum is 12 replay request per minute.
+    scan_request_rate_limit: 3600 # Number of IAST replay request played per minute, Default is 3600
 
     # The scan_schedule configuration allows to specify when IAST scans should be executed
     scan_schedule:
