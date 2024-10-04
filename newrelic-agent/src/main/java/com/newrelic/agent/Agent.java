@@ -25,6 +25,7 @@ import com.newrelic.agent.service.ServiceManager;
 import com.newrelic.agent.service.ServiceManagerImpl;
 import com.newrelic.agent.stats.StatsService;
 import com.newrelic.agent.stats.StatsWorks;
+import com.newrelic.agent.stats.TransactionStats;
 import com.newrelic.agent.util.UnwindableInstrumentation;
 import com.newrelic.agent.util.UnwindableInstrumentationImpl;
 import com.newrelic.agent.util.asm.ClassStructure;
@@ -265,6 +266,22 @@ public final class Agent {
                     public void disconnected(IRPMService rpmService) {
                         LOG.log(Level.INFO, "Deactivating New Relic Security module");
                         NewRelicSecurity.getAgent().deactivateSecurity();
+                    }
+                });
+                ServiceFactory.getTransactionService().addTransactionListener(new ExtendedTransactionListener() {
+                    @Override
+                    public void dispatcherTransactionStarted(Transaction transaction) {
+                        NewRelicSecurity.getAgent().dispatcherTransactionStarted();
+                    }
+
+                    @Override
+                    public void dispatcherTransactionCancelled(Transaction transaction) {
+                        NewRelicSecurity.getAgent().dispatcherTransactionCancelled();
+                    }
+
+                    @Override
+                    public void dispatcherTransactionFinished(TransactionData transactionData, TransactionStats transactionStats) {
+                        NewRelicSecurity.getAgent().dispatcherTransactionFinished();
                     }
                 });
             } catch (Throwable t2) {
