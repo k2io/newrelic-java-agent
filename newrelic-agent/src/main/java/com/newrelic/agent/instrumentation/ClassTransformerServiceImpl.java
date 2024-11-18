@@ -30,6 +30,7 @@ import com.newrelic.agent.service.ServiceFactory;
 import com.newrelic.agent.util.DefaultThreadFactory;
 import com.newrelic.agent.util.asm.Utils;
 import com.newrelic.api.agent.NewRelic;
+import com.newrelic.api.agent.security.instrumentation.helpers.ThreadLocalLockHelper;
 import com.newrelic.api.agent.security.schema.SecurityMetaData;
 import org.objectweb.asm.commons.Method;
 
@@ -160,6 +161,7 @@ public class ClassTransformerServiceImpl extends AbstractService implements Clas
         // Preload Security used classes to avoid complete application thread blocking in rare scenarios.
         StringUtils.startsWithAny(StringUtils.LF, StringUtils.EMPTY, StringUtils.LF);
         new SecurityMetaData();
+        ThreadLocalLockHelper.isLockHeldByCurrentThread();
 
         contextManager.addContextClassTransformer(classTransformer.getMatcher(), classTransformer);
         for (PointCut pc : classTransformer.getPointcuts()) {
