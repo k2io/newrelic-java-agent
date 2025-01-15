@@ -32,6 +32,7 @@ import com.newrelic.agent.util.asm.Utils;
 import com.newrelic.api.agent.NewRelic;
 import com.newrelic.api.agent.security.instrumentation.helpers.ThreadLocalLockHelper;
 import com.newrelic.api.agent.security.schema.SecurityMetaData;
+import org.apache.commons.lang3.ArrayUtils;
 import org.objectweb.asm.commons.Method;
 
 import java.lang.instrument.ClassFileTransformer;
@@ -159,6 +160,7 @@ public class ClassTransformerServiceImpl extends AbstractService implements Clas
         NewRelic.getAgent().getTransaction();
 
         // Preload Security used classes to avoid complete application thread blocking in rare scenarios.
+        ArrayUtils.isEmpty(new Object[0]);
         StringUtils.startsWithAny(StringUtils.LF, StringUtils.EMPTY, StringUtils.LF);
         new SecurityMetaData();
         ThreadLocalLockHelper.isLockHeldByCurrentThread();
