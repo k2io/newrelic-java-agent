@@ -24,20 +24,21 @@ import com.newrelic.agent.instrumentation.methodmatchers.MethodMatcher;
 import com.newrelic.agent.instrumentation.tracing.TraceDetails;
 import com.newrelic.agent.instrumentation.tracing.TraceDetailsBuilder;
 import com.newrelic.agent.instrumentation.weaver.ClassLoaderClassTransformer;
-import com.newrelic.agent.security.deps.org.apache.commons.lang3.StringUtils;
 import com.newrelic.agent.service.AbstractService;
 import com.newrelic.agent.service.ServiceFactory;
 import com.newrelic.agent.util.DefaultThreadFactory;
 import com.newrelic.agent.util.asm.Utils;
 import com.newrelic.api.agent.NewRelic;
+import com.newrelic.api.agent.security.instrumentation.helpers.ThreadLocalLockHelper;
 import com.newrelic.api.agent.security.schema.SecurityMetaData;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.objectweb.asm.commons.Method;
 
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.lang.instrument.Instrumentation;
 import java.lang.instrument.UnmodifiableClassException;
-import java.lang.reflect.Constructor;
 import java.security.ProtectionDomain;
 import java.text.MessageFormat;
 import java.util.*;
@@ -158,8 +159,10 @@ public class ClassTransformerServiceImpl extends AbstractService implements Clas
         NewRelic.getAgent().getTransaction();
 
         // Preload Security used classes to avoid complete application thread blocking in rare scenarios.
+        ArrayUtils.isEmpty(new Object[0]);
         StringUtils.startsWithAny(StringUtils.LF, StringUtils.EMPTY, StringUtils.LF);
         new SecurityMetaData();
+        ThreadLocalLockHelper.isLockHeldByCurrentThread();
 
         contextManager.addContextClassTransformer(classTransformer.getMatcher(), classTransformer);
         for (PointCut pc : classTransformer.getPointcuts()) {
